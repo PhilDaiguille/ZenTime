@@ -1,14 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts"],
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/fonts"
+  ],
+
   app: {
     head: {
       htmlAttrs: {
-        "data-theme": "ZenTime",
+        "data-theme": "ZenTimeLight"
       },
       script: [
         {
@@ -18,10 +23,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  vite: {
-    plugins: [tailwindcss()],
-  },
+
   css: ["@/assets/css/app.css"],
+
   fonts: {
     defaults: {
       weights: [400],
@@ -33,18 +37,27 @@ export default defineNuxtConfig({
         "greek",
         "vietnamese",
         "latin-ext",
-        "latin",
+        "latin"
       ],
     },
     families: [{ name: "Inter", provider: "google" }],
   },
+
   tailwindcss: {
     exposeConfig: true,
     viewer: true,
+    config: {
+      plugins: [require('daisyui')],
+      daisyui: {
+        themes: ["ZenTimeLight", "ZenTimeDark"],
+      }
+    }
   },
+
   nitro: {
     compressPublicAssets: true,
     minify: true,
   },
+
   ssr: true,
-});
+})
