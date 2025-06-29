@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
@@ -9,6 +10,12 @@ export default defineNuxtConfig({
       htmlAttrs: {
         "data-theme": "ZenTime",
       },
+      script: [
+        {
+          src: "https://cdn.jsdelivr.net/npm/@magenta/lofi@latest/dist/bundle.js",
+          defer: true,
+        },
+      ],
     },
   },
   vite: {
