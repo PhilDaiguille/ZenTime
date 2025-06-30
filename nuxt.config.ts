@@ -4,6 +4,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    public: {
+      openWeatherApiKey: process.env.OPENWEATHER_API_KEY
+    }
+  },
+
   modules: [
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
@@ -40,7 +46,10 @@ export default defineNuxtConfig({
         "latin"
       ],
     },
-    families: [{ name: "Inter", provider: "google" }],
+    families: [
+      { name: "Inter", provider: "google" },
+      { name: "Merriweather", provider: "google" }
+    ],
   },
 
   tailwindcss: {
