@@ -1,9 +1,9 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
-import { useYouTubeSearch } from '@/composables/useYouTubeSearch'
-import SessionCard        from '@/components/SessionCard.vue'
-import UFilterBar         from '@/components/UFilterBar.vue'
-import SessionBackground  from '@/components/ZenWave.vue'
+import { useYouTubeSearch } from '~/composables/useYouTubeSearch'
+import SessionCard from '~/components/SessionCard.vue'
+import UFilterBar from '~/components/UFilterBar.vue'
+import ZenWave from '~/components/ZenWave.vue'
 
 const filters      = reactive({ theme: 'tous', duration: 'tous', type: 'tous' })
 const { sessions, isLoading: loading, search } = useYouTubeSearch()
@@ -99,7 +99,7 @@ const guidedVideos = computed(() => filters.type==='audio' ? [] : videoResults.v
 
 <template>
   <div class="relative min-h-screen bg-[#fff9f0] pt-24 pb-32">
-    <SessionBackground />
+    <ZenWave />
     <section class="relative z-10 max-w-6xl mx-auto px-4">
       <div class="flex flex-col sm:flex-row sm:items-end gap-4">
         <UFilterBar :model-value="filters" @update:model-value="updateFilters" />
