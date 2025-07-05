@@ -1,39 +1,113 @@
-import { ref } from 'vue'
+import { ref } from '#imports'
+import type { Ref } from 'vue'
 
-export function useYouTubeSearch() {
-    const sessions = ref([])
-    const isLoading = ref(false)
-    const nextPageToken = ref(null)
-    const prevPageToken = ref(null)
-    const currentQuery = ref('')
+// Types pour les données YouTube
+interface YouTubeThumbnail {
+    url: string
+    width: number
+    height: number
+}
 
-    const API_KEY = 'AIzaSyA3fy6lq27NG0N-0zL42FejHD1nC1DV0To'
+interface YouTubeThumbnails {
+    default?: YouTubeThumbnail
+    medium?: YouTubeThumbnail
+    high?: YouTubeThumbnail
+}
 
-    const search = async (query, pageToken = '', type = 'general') => {
+interface YouTubeSnippet {
+    title: string
+    description: string
+    channelTitle: string
+    publishedAt: string
+    thumbnails: YouTubeThumbnails
+}
+
+interface YouTubeSearchItem {
+    id: {
+        videoId: string
+    }
+    snippet: YouTubeSnippet
+}
+
+interface YouTubeVideoDetails {
+    id: string
+    contentDetails: {
+        duration: string
+    }
+    snippet: YouTubeSnippet
+}
+
+interface YouTubeSearchResponse {
+    items: YouTubeSearchItem[]
+    nextPageToken?: string
+    prevPageToken?: string
+}
+
+interface YouTubeVideosResponse {
+    items: YouTubeVideoDetails[]
+}
+
+// Type pour une session vidéo transformée
+export interface VideoSession {
+    id: string
+    title: string
+    thumbnail: string
+    channel: string
+    videoUrl: string
+    description: string
+    publishedAt: string
+    duration: number | null
+    durationText: string
+}
+
+// Type pour le type de recherche
+type SearchType = 'general' | 'audio' | 'video'
+
+// Interface de retour du composable
+interface UseYouTubeSearchReturn {
+    sessions: Ref<VideoSession[]>
+    isLoading: Ref<boolean>
+    search: (query: string, pageToken?: string, type?: SearchType) => Promise<void>
+    goNextPage: () => void
+    goPrevPage: () => void
+    nextPageToken: Ref<string | null>
+    prevPageToken: Ref<string | null>
+}
+
+export function useYouTubeSearch(): UseYouTubeSearchReturn {
+    const sessions: Ref<VideoSession[]> = ref([])
+    const isLoading: Ref<boolean> = ref(false)
+    const nextPageToken: Ref<string | null> = ref(null)
+    const prevPageToken: Ref<string | null> = ref(null)
+    const currentQuery: Ref<string> = ref('')
+
+    const API_KEY: string = 'AIzaSyA3fy6lq27NG0N-0zL42FejHD1nC1DV0To'
+
+    const search = async (query: string, pageToken: string = '', type: SearchType = 'general'): Promise<void> => {
         isLoading.value = true
         currentQuery.value = query
 
-        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=12&q=${encodeURIComponent(query)}&key=${API_KEY}&pageToken=${pageToken}`
+        const searchUrl: string = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=12&q=${encodeURIComponent(query)}&key=${API_KEY}&pageToken=${pageToken}`
 
         try {
-            const res = await fetch(searchUrl)
-            const data = await res.json()
+            const res: Response = await fetch(searchUrl)
+            const data: YouTubeSearchResponse = await res.json()
 
             if (!data.items) {
                 sessions.value = []
                 return
             }
 
-            const videoIds = data.items.map(item => item.id.videoId).join(',')
-            const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${videoIds}&key=${API_KEY}`
+            const videoIds: string = data.items.map(item => item.id.videoId).join(',')
+            const detailsUrl: string = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${videoIds}&key=${API_KEY}`
 
-            const detailsRes = await fetch(detailsUrl)
-            const detailsData = await detailsRes.json()
+            const detailsRes: Response = await fetch(detailsUrl)
+            const detailsData: YouTubeVideosResponse = await detailsRes.json()
 
             sessions.value = data.items
-                .filter(item => {
-                    const title = item.snippet.title.toLowerCase()
-                    const description = item.snippet.description.toLowerCase()
+                .filter((item: YouTubeSearchItem): boolean => {
+                    const title: string = item.snippet.title.toLowerCase()
+                    const description: string = item.snippet.description.toLowerCase()
 
                     if (type === 'audio') {
                         return title.includes('music') ||
@@ -51,7 +125,7 @@ export function useYouTubeSearch() {
                             title.includes('chill music') ||
                             title.includes('peaceful music')
                     } else if (type === 'video') {
-                        const isMusic = title.includes('music only') ||
+                        const isMusic: boolean = title.includes('music only') ||
                             title.includes('musique seulement') ||
                             title.includes('instrumental only') ||
                             title.includes('piano solo') ||
@@ -59,7 +133,7 @@ export function useYouTubeSearch() {
                             title.includes('background music') ||
                             (title.includes('music') && !title.includes('guided') && !title.includes('meditation') && !title.includes('asmr'))
 
-                        const isGuided = title.includes('meditation') ||
+                        const isGuided: boolean = title.includes('meditation') ||
                             title.includes('méditation') ||
                             title.includes('hypnose') ||
                             title.includes('hypnosis') ||
@@ -85,15 +159,15 @@ export function useYouTubeSearch() {
                             title.includes('healing') ||
                             title.includes('guérison')
 
-                        const isASMR = title.includes('asmr')
+                        const isASMR: boolean = title.includes('asmr')
 
                         return !isMusic && (isGuided || isASMR)
                     }
                     return true
                 })
-                .map(item => {
-                    const details = detailsData.items.find(d => d.id === item.id.videoId)
-                    const duration = details ? parseDuration(details.contentDetails.duration) : null
+                .map((item: YouTubeSearchItem): VideoSession => {
+                    const details: YouTubeVideoDetails | undefined = detailsData.items.find((d: YouTubeVideoDetails) => d.id === item.id.videoId)
+                    const duration: number | null = details ? parseDuration(details.contentDetails.duration) : null
 
                     return {
                         id: item.id.videoId,
@@ -112,7 +186,7 @@ export function useYouTubeSearch() {
 
             nextPageToken.value = data.nextPageToken || null
             prevPageToken.value = data.prevPageToken || null
-        } catch (err) {
+        } catch (err: unknown) {
             console.error('Erreur YouTube API', err)
             throw err
         } finally {
@@ -120,21 +194,21 @@ export function useYouTubeSearch() {
         }
     }
 
-    const parseDuration = (duration) => {
-        const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
+    const parseDuration = (duration: string): number => {
+        const match: RegExpMatchArray | null = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
         if (!match) return 0
 
-        const hours = parseInt(match[1] || 0)
-        const minutes = parseInt(match[2] || 0)
-        const seconds = parseInt(match[3] || 0)
+        const hours: number = parseInt(match[1] || '0')
+        const minutes: number = parseInt(match[2] || '0')
+        const seconds: number = parseInt(match[3] || '0')
 
         return hours * 3600 + minutes * 60 + seconds
     }
 
-    const formatDuration = (seconds) => {
-        const hours = Math.floor(seconds / 3600)
-        const minutes = Math.floor((seconds % 3600) / 60)
-        const secs = seconds % 60
+    const formatDuration = (seconds: number): string => {
+        const hours: number = Math.floor(seconds / 3600)
+        const minutes: number = Math.floor((seconds % 3600) / 60)
+        const secs: number = seconds % 60
 
         if (hours > 0) {
             return `${hours}h ${minutes}m`
@@ -143,13 +217,13 @@ export function useYouTubeSearch() {
         }
     }
 
-    const goNextPage = () => {
+    const goNextPage = (): void => {
         if (nextPageToken.value && currentQuery.value) {
             search(currentQuery.value, nextPageToken.value)
         }
     }
 
-    const goPrevPage = () => {
+    const goPrevPage = (): void => {
         if (prevPageToken.value && currentQuery.value) {
             search(currentQuery.value, prevPageToken.value)
         }

@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
-import { useYouTubeSearch } from '@/composables/useYouTubeSearch'
+import { useYouTubeSearch } from '~/composables/useYoutubeSearch.js'
 import SessionCard        from '@/components/SessionCard.vue'
 import UFilterBar         from '@/components/UFilterBar.vue'
 import SessionBackground  from '@/components/ZenWave.vue'
