@@ -1,25 +1,20 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
 
   runtimeConfig: {
     public: {
-      openWeatherApiKey: process.env.OPENWEATHER_API_KEY
-    }
+      openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
+    },
   },
 
-  modules: [
-    "@nuxt/eslint",
-    "@nuxtjs/tailwindcss",
-    "@nuxt/fonts"
-  ],
+  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts"],
 
   app: {
     head: {
       htmlAttrs: {
-        "data-theme": "ZenTimeLight"
+        "data-theme": "ZenTimeLight",
       },
       script: [
         {
@@ -43,12 +38,12 @@ export default defineNuxtConfig({
         "greek",
         "vietnamese",
         "latin-ext",
-        "latin"
+        "latin",
       ],
     },
     families: [
-      { name: "Inter", provider: "google" },
-      { name: "Merriweather", provider: "google" }
+      { name: "Inter", provider: "google", global: true },
+      { name: "Merriweather", provider: "google", global: true },
     ],
   },
 
@@ -56,11 +51,10 @@ export default defineNuxtConfig({
     exposeConfig: true,
     viewer: true,
     config: {
-      plugins: [require('daisyui')],
       daisyui: {
-        themes: ["ZenTimeLight", "ZenTimeDark"],
-      }
-    }
+        themes: ["ZenTimeLight", "ZenTimeDawn", "ZenTimeDusk", "ZenTimeDark"],
+      },
+    },
   },
 
   nitro: {
@@ -69,4 +63,4 @@ export default defineNuxtConfig({
   },
 
   ssr: true,
-})
+});
