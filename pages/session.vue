@@ -70,47 +70,32 @@ async function fetchAudioVideos() {
   writeCache(`audio_${q}_${filters.duration}`, res);
 }
 
-async function fetchVideoContent() {
-  const q = buildKeyword("video");
-  const c = readCache(`video_${q}_${filters.duration}`);
-  if (c) {
-    videoResults.value = c;
-    fromCache.value = true;
-    return;
-  }
-  await search(q, "", "video");
-  const res = applyDurationFilter(sessions.value);
-  videoResults.value = res;
-  writeCache(`video_${q}_${filters.duration}`, res);
+async function fetchVideoContent () {
+  const q = buildKeyword('video')
+  const c = readCache(`video_${q}_${filters.duration}`)
+  if (c) { videoResults.value = c; fromCache.value = true; return }
+  await search(q,'','video')
+  const res = applyDurationFilter(sessions.value)
+  videoResults.value = res
+  writeCache(`video_${q}_${filters.duration}`,res)
 }
 
-async function fetchVideos() {
-  error.value = "";
-  fromCache.value = false;
-  lastSearch.value = buildKeyword();
+async function fetchVideos () {
+  error.value=''; fromCache.value=false; lastSearch.value = buildKeyword()
   try {
-    if (filters.type === "audio") {
-      await fetchAudioVideos();
-      videoResults.value = [];
-    } else if (filters.type === "video") {
-      await fetchVideoContent();
-      audioResults.value = [];
-    } else {
-      await Promise.all([fetchAudioVideos(), fetchVideoContent()]);
-    }
-  } catch (e) {
-    console.error(e);
-    error.value = "Erreur de chargement.";
-  }
+    if (filters.type==='audio') { await fetchAudioVideos(); videoResults.value=[] }
+    else if (filters.type==='video'){ await fetchVideoContent(); audioResults.value=[] }
+    else { await Promise.all([fetchAudioVideos(),fetchVideoContent()]) }
+  } catch(e){ console.error(e); error.value='Erreur de chargement.' }
 }
 
 async function loadDefaultContent() {
   try {
-    await fetchAudioVideos();
-    await fetchVideoContent();
-    lastSearch.value = "Contenu par défaut";
-  } catch (e) {
-    await fetchVideos();
+    await fetchAudioVideos()
+    await fetchVideoContent()
+    lastSearch.value = 'Contenu par défaut'
+  }
+  catch (e) {
     console.error(e);
   }
 }
@@ -147,10 +132,8 @@ const guidedVideos = computed(() =>
     >
       <h2 class="text-2xl font-bold mb-4">Musique relaxante 🎵</h2>
 
-      <div v-if="loading" class="text-center py-16">Chargement…</div>
-      <div v-else-if="error" class="text-center py-16 text-error">
-        {{ error }}
-      </div>
+      <div v-if="loading"      class="text-center py-16">Chargement…</div>
+      <div v-else-if="error"   class="text-center py-16 text-error">{{ error }}</div>
 
       <div
         v-else-if="audioVideos.length"
@@ -160,30 +143,20 @@ const guidedVideos = computed(() =>
       </div>
 
       <div v-else class="text-center py-16 text-neutral">
-        {{
-          lastSearch ? "Aucune musique trouvée." : "Cliquez sur « Rechercher »."
-        }}
+        {{ lastSearch ? 'Aucune musique trouvée.' : 'Cliquez sur « Rechercher ».' }}
       </div>
     </section>
-    <section
-      v-if="filters.type === 'video' || filters.type === 'tous'"
-      class="relative z-10 max-w-6xl mx-auto px-4 mt-12"
-    >
+    <section v-if="filters.type==='video'||filters.type==='tous'"
+             class="relative z-10 max-w-6xl mx-auto px-4 mt-12">
       <h2 class="text-2xl font-bold mb-4">Vidéos YouTube 🧘‍♀️</h2>
-      <div v-if="loading" class="text-center py-16">Chargement…</div>
-      <div v-else-if="error" class="text-center py-16 text-error">
-        {{ error }}
-      </div>
-      <div
-        v-else-if="guidedVideos.length"
-        class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <div v-if="loading"      class="text-center py-16">Chargement…</div>
+      <div v-else-if="error"   class="text-center py-16 text-error">{{ error }}</div>
+      <div v-else-if="guidedVideos.length"
+           class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <SessionCard v-for="v in guidedVideos" :key="v.id" :video="v" />
       </div>
       <div v-else class="text-center py-16 text-neutral">
-        {{
-          lastSearch ? "Aucune vidéo trouvée." : "Cliquez sur « Rechercher »."
-        }}
+        {{ lastSearch ? 'Aucune vidéo trouvée.' : 'Cliquez sur « Rechercher ».' }}
       </div>
     </section>
   </div>
