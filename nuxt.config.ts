@@ -4,12 +4,15 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
 
-  modules: [
+runtimeConfig: {
+    public: {
+      openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
+    },
+  },  modules: [
     "@nuxt/eslint",
     "@nuxtjs/tailwindcss",
     "@nuxt/fonts"
   ],
-
   app: {
     head: {
       htmlAttrs: {
@@ -37,21 +40,23 @@ export default defineNuxtConfig({
         "greek",
         "vietnamese",
         "latin-ext",
-        "latin"
+        "latin",
       ],
     },
-    families: [{ name: "Inter", provider: "google" }],
+    families: [
+      { name: "Inter", provider: "google", global: true },
+      { name: "Merriweather", provider: "google", global: true },
+    ],
   },
 
   tailwindcss: {
     exposeConfig: true,
     viewer: true,
     config: {
-      plugins: [require('daisyui')],
       daisyui: {
-        themes: ["ZenTimeLight", "ZenTimeDark"],
-      }
-    }
+        themes: ["ZenTimeLight", "ZenTimeDawn", "ZenTimeDusk", "ZenTimeDark"],
+      },
+    },
   },
 
   nitro: {
