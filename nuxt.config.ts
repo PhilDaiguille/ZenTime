@@ -1,20 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
 
-  runtimeConfig: {
+runtimeConfig: {
     public: {
       openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
     },
-  },
-
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts"],
-
+  },  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/fonts"
+  ],
   app: {
     head: {
       htmlAttrs: {
-        "data-theme": "ZenTimeLight",
+        "data-theme": "ZenTimeLight"
       },
       script: [
         {
@@ -63,4 +65,4 @@ export default defineNuxtConfig({
   },
 
   ssr: true,
-});
+})
