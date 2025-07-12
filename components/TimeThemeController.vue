@@ -97,7 +97,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="theme-controller bg-base-200 p-4 rounded-lg shadow-lg">
+  <div
+    class="theme-controller bg-base-200 p-4 rounded-lg shadow-lg max-w-xl mx-auto container"
+  >
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
         <div class="w-3 h-3 rounded-full" :class="periodColor" />
@@ -117,7 +119,6 @@ onUnmounted(() => {
           :class="autoMode ? 'btn-primary' : 'btn-outline'"
           @click="toggleAutoMode"
         >
-          <Icon name="i-heroicons-clock" class="w-4 h-4" />
           {{ autoMode ? "Auto" : "Manuel" }}
         </button>
       </div>
@@ -125,7 +126,6 @@ onUnmounted(() => {
 
     <div v-if="autoMode && timeToNext" class="mb-4">
       <div class="flex items-center gap-2 text-sm text-base-content/70">
-        <Icon name="i-heroicons-arrow-right" class="w-4 h-4" />
         <span
           >Prochain: {{ timeToNext.nextPeriod }} dans {{ timeToNext.hours }}h
           {{ timeToNext.minutes }}m</span

@@ -52,8 +52,8 @@ function prevPage() {
         Ton Journal
       </h2>
       <button
-        @click="$emit('clear')"
         class="text-red-500 hover:text-red-700 text-xs transition-colors opacity-60 hover:opacity-100"
+        @click="$emit('clear')"
       >
         Supprimer l'historique
       </button>
@@ -75,9 +75,9 @@ function prevPage() {
                   left: '20px',
                   right: '20px',
                 }"
-              ></div>
+              />
             </div>
-            <div class="absolute left-6 top-4 bottom-4 w-px bg-red-300"></div>
+            <div class="absolute left-6 top-4 bottom-4 w-px bg-red-300" />
             <div class="relative z-10 p-4 pl-10 overflow-y-auto">
               <div v-if="currentEntry" class="space-y-3">
                 <div
@@ -118,7 +118,7 @@ function prevPage() {
                 v-for="n in 6"
                 :key="n"
                 class="w-px h-3 bg-base-content opacity-30"
-              ></div>
+              />
             </div>
           </div>
           <div class="flex-1 bg-white relative">
@@ -132,9 +132,9 @@ function prevPage() {
                   left: '20px',
                   right: '20px',
                 }"
-              ></div>
+              />
             </div>
-            <div class="absolute right-6 top-4 bottom-4 w-px bg-red-300"></div>
+            <div class="absolute right-6 top-4 bottom-4 w-px bg-red-300" />
             <div class="relative z-10 p-4 pr-10 overflow-y-auto">
               <div v-if="nextEntry" class="space-y-3">
                 <div
@@ -170,9 +170,9 @@ function prevPage() {
       <div v-if="entries.length > 0" class="flex justify-center mt-4">
         <div class="flex items-center gap-4 bg-base-200 px-4 py-2 rounded-full">
           <button
-            @click="prevPage"
             :disabled="currentPage === 0"
             class="text-base-content opacity-50 hover:opacity-100 disabled:opacity-20 transition-opacity text-xs"
+            @click="prevPage"
           >
             ← Précédent
           </button>
@@ -181,9 +181,9 @@ function prevPage() {
             {{ Math.ceil(entries.length / 2) }}
           </span>
           <button
-            @click="nextPage"
             :disabled="currentPage + 1 >= entries.length"
             class="text-base-content opacity-50 hover:opacity-100 disabled:opacity-20 transition-opacity text-xs"
+            @click="nextPage"
           >
             Suivant →
           </button>

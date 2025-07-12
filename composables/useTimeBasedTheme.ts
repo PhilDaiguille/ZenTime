@@ -99,14 +99,10 @@ export const useTimeBasedTheme = () => {
     const currentHour = now.getHours();
 
     let nextChangeHour: number;
-    if (currentHour < 5)
-      nextChangeHour = 5; 
-    else if (currentHour < 8)
-      nextChangeHour = 8; 
-    else if (currentHour < 17)
-      nextChangeHour = 17; 
-    else if (currentHour < 20)
-      nextChangeHour = 20; 
+    if (currentHour < 5) nextChangeHour = 5;
+    else if (currentHour < 8) nextChangeHour = 8;
+    else if (currentHour < 17) nextChangeHour = 17;
+    else if (currentHour < 20) nextChangeHour = 20;
     else nextChangeHour = 5 + 24;
 
     const nextChange = new Date();

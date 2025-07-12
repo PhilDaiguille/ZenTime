@@ -85,8 +85,8 @@ onUnmounted(closePlayer);
       />
       <button
         class="btn btn-sm btn-circle bg-base-200 text-base-content hover:bg-base-300 absolute right-2 top-2"
-        @click="closePlayer"
         aria-label="Fermer"
+        @click="closePlayer"
       >
         ✕
       </button>
