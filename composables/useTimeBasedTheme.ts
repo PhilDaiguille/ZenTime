@@ -20,9 +20,10 @@ interface ThemeChangeDetail {
   hour: number;
 }
 
+let globalThemeInterval: NodeJS.Timeout | null = null;
+
 export const useTimeBasedTheme = () => {
   const currentTheme = ref<ThemeName>("ZenTimeLight");
-  let themeInterval: NodeJS.Timeout | null = null;
 
   const timeThemes: Record<string, ThemePeriod> = {
     dawn: { start: 5, end: 8, theme: "ZenTimeDawn", name: "Aube" },
@@ -74,14 +75,14 @@ export const useTimeBasedTheme = () => {
     if (import.meta.client) {
       updateTheme();
 
-      themeInterval = setInterval(updateTheme, 60000);
+      globalThemeInterval = setInterval(updateTheme, 60000);
     }
   };
 
   const stopAutoTheme = (): void => {
-    if (themeInterval) {
-      clearInterval(themeInterval);
-      themeInterval = null;
+    if (globalThemeInterval) {
+      clearInterval(globalThemeInterval);
+      globalThemeInterval = null;
     }
   };
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { getCurrentPeriod } = useTimeBasedTheme();
+const { getCurrentPeriod, timeThemes, currentTheme } = useTimeBasedTheme();
+
+const themeStore = useThemeStore();
 const currentPeriod = ref(getCurrentPeriod());
 
 const periodColors = {
@@ -8,18 +10,16 @@ const periodColors = {
   dusk: "bg-gradient-to-r from-purple-400 to-pink-500",
   night: "bg-gradient-to-r from-indigo-900 to-gray-900",
 };
+
 const periodTime = computed(() => {
-  const period = getCurrentPeriod();
-  return `${period.start}h - ${period.end}h`;
+  return `${currentPeriod.value.start}h - ${currentPeriod.value.end}h`;
 });
 
 type PeriodKey = "dawn" | "day" | "dusk" | "night";
 
 const periodColor = computed(() => {
-  const period = getCurrentPeriod();
-  const { timeThemes } = useTimeBasedTheme();
   const key = (Object.keys(timeThemes) as PeriodKey[]).find(
-    (k) => timeThemes[k].theme === period.theme,
+    (k) => timeThemes[k].theme === currentPeriod.value.theme,
   );
   if (key && key in periodColors) {
     return periodColors[key as keyof typeof periodColors];
@@ -27,21 +27,52 @@ const periodColor = computed(() => {
   return "bg-base-content";
 });
 
+const getPeriodFromCurrentTheme = () => {
+  const theme = currentTheme.value;
+  const key = (Object.keys(timeThemes) as PeriodKey[]).find(
+    (k) => timeThemes[k].theme === theme,
+  );
+  return key ? timeThemes[key] : getCurrentPeriod();
+};
+
 let updateInterval: ReturnType<typeof setInterval> | null = null;
 
 const updatePeriod = () => {
-  currentPeriod.value = getCurrentPeriod();
+  if (themeStore.isAutoMode.value) {
+    currentPeriod.value = getCurrentPeriod();
+  }
 };
 
-const handleThemeChange = () => {
-  updatePeriod();
+const handleThemeChange = (_event: Event) => {
+  if (themeStore.isAutoMode.value) {
+    currentPeriod.value = getCurrentPeriod();
+  } else {
+    currentPeriod.value = getPeriodFromCurrentTheme();
+  }
+};
+
+const handleModeChange = (_event: Event) => {
+  if (themeStore.isAutoMode.value) {
+    currentPeriod.value = getCurrentPeriod();
+  } else {
+    currentPeriod.value = getPeriodFromCurrentTheme();
+  }
 };
 
 onMounted(() => {
+  nextTick(() => {
+    if (themeStore.isAutoMode.value) {
+      currentPeriod.value = getCurrentPeriod();
+    } else {
+      currentPeriod.value = getPeriodFromCurrentTheme();
+    }
+  });
+
   updateInterval = setInterval(updatePeriod, 60000);
 
   if (import.meta.client) {
     window.addEventListener("theme-changed", handleThemeChange);
+    window.addEventListener("theme-mode-changed", handleModeChange);
   }
 });
 
@@ -52,6 +83,7 @@ onUnmounted(() => {
 
   if (import.meta.client) {
     window.removeEventListener("theme-changed", handleThemeChange);
+    window.removeEventListener("theme-mode-changed", handleModeChange);
   }
 });
 </script>
