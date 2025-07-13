@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -12,21 +13,21 @@ import {
 } from "chart.js";
 
 ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
+    Title,
+    Tooltip,
+    Legend,
+    LineElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
 );
 
-const props = defineProps({
-  labels: Array,
-  dataPoints: Array,
-});
+const props = defineProps<{
+  labels: string[]
+  dataPoints: number[]
+}>()
 
-const chartData = {
+const chartData = computed(() => ({
   labels: props.labels,
   datasets: [
     {
@@ -41,7 +42,7 @@ const chartData = {
       pointBackgroundColor: "#ffd47f",
     },
   ],
-};
+}))
 
 const chartOptions = {
   responsive: true,
@@ -58,18 +59,13 @@ const chartOptions = {
         font: {
           size: 24,
         },
-        callback: (value) => {
+        callback: (value: number) => {
           switch (value) {
-            case 1:
-              return "😢";
-            case 2:
-              return "😐";
-            case 3:
-              return "🙂";
-            case 4:
-              return "😁";
-            default:
-              return value;
+            case 1: return "😢"
+            case 2: return "😐"
+            case 3: return "🙂"
+            case 4: return "😁"
+            default: return value
           }
         },
       },
