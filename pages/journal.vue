@@ -23,13 +23,13 @@ const chartDataPoints = computed(() => journal.chartDataPoints)
 const journalPageRef = ref(null)
 
 const soundOptions = [
-  { name: 'Forêt (oiseaux)', file: '/sounds/birds-forest.wav', image: '/images/forest.jpg' },
-  { name: 'Cicadas', file: '/sounds/cicadas.wav', image: '/images/cicadas.jpg' },
-  { name: 'Campagne', file: '/sounds/countryside.wav', image: '/images/countryside.jpg' },
-  { name: 'Feu de cheminée', file: '/sounds/fireplace.wav', image: '/images/fireplace.jpg' },
+  { name: 'Forêt (oiseaux)', file: '/sounds/birds-forest.mp3', image: '/images/forest.jpg' },
+  { name: 'Cicadas', file: '/sounds/cicadas.mp3', image: '/images/cicadas.jpg' },
+  { name: 'Campagne', file: '/sounds/countryside.mp3', image: '/images/countryside.jpg' },
+  { name: 'Feu de cheminée', file: '/sounds/fireplace.mp3', image: '/images/fireplace.jpg' },
   { name: 'Océan', file: '/sounds/ocean-waves.mp3', image: '/images/ocean.jpg' },
   { name: 'Pluie en forêt', file: '/sounds/rain-forest.mp3', image: '/images/rain.jpg' },
-  { name: 'Vagues', file: '/sounds/sea-waves.wav', image: '/images/sea-waves.jpg' }
+  { name: 'Vagues', file: '/sounds/sea-waves.mp3', image: '/images/sea-waves.jpg' }
 ]
 
 
