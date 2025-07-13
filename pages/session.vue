@@ -70,32 +70,46 @@ async function fetchAudioVideos() {
   writeCache(`audio_${q}_${filters.duration}`, res);
 }
 
-async function fetchVideoContent () {
-  const q = buildKeyword('video')
-  const c = readCache(`video_${q}_${filters.duration}`)
-  if (c) { videoResults.value = c; fromCache.value = true; return }
-  await search(q,'','video')
-  const res = applyDurationFilter(sessions.value)
-  videoResults.value = res
-  writeCache(`video_${q}_${filters.duration}`,res)
+async function fetchVideoContent() {
+  const q = buildKeyword("video");
+  const c = readCache(`video_${q}_${filters.duration}`);
+  if (c) {
+    videoResults.value = c;
+    fromCache.value = true;
+    return;
+  }
+  await search(q, "", "video");
+  const res = applyDurationFilter(sessions.value);
+  videoResults.value = res;
+  writeCache(`video_${q}_${filters.duration}`, res);
 }
 
-async function fetchVideos () {
-  error.value=''; fromCache.value=false; lastSearch.value = buildKeyword()
+async function fetchVideos() {
+  error.value = "";
+  fromCache.value = false;
+  lastSearch.value = buildKeyword();
   try {
-    if (filters.type==='audio') { await fetchAudioVideos(); videoResults.value=[] }
-    else if (filters.type==='video'){ await fetchVideoContent(); audioResults.value=[] }
-    else { await Promise.all([fetchAudioVideos(),fetchVideoContent()]) }
-  } catch(e){ console.error(e); error.value='Erreur de chargement.' }
+    if (filters.type === "audio") {
+      await fetchAudioVideos();
+      videoResults.value = [];
+    } else if (filters.type === "video") {
+      await fetchVideoContent();
+      audioResults.value = [];
+    } else {
+      await Promise.all([fetchAudioVideos(), fetchVideoContent()]);
+    }
+  } catch (e) {
+    console.error(e);
+    error.value = "Erreur de chargement.";
+  }
 }
 
 async function loadDefaultContent() {
   try {
-    await fetchAudioVideos()
-    await fetchVideoContent()
-    lastSearch.value = 'Contenu par défaut'
-  }
-  catch (e) {
+    await fetchAudioVideos();
+    await fetchVideoContent();
+    lastSearch.value = "Contenu par défaut";
+  } catch (e) {
     console.error(e);
   }
 }
@@ -109,55 +123,85 @@ const guidedVideos = computed(() =>
 </script>
 
 <template>
-  <div class="relative min-h-screen bg-[#fff9f0] pt-24 pb-32">
-    <ZenWave />
-    <section class="relative z-10 max-w-6xl mx-auto px-4">
-      <div class="flex flex-col sm:flex-row sm:items-end gap-4">
-        <UFilterBar
-          :model-value="filters"
-          @update:model-value="updateFilters"
-        />
-        <button
-          class="btn bg-base-200 text-base-content border-none hover:bg-base-300 transition"
-          :disabled="loading"
-          @click="fetchVideos"
-        >
-          🔍 Rechercher
-        </button>
-      </div>
-    </section>
-    <section
-      v-if="filters.type === 'audio' || filters.type === 'tous'"
-      class="relative z-10 max-w-6xl mx-auto px-4 mt-10"
-    >
-      <h2 class="text-2xl font-bold mb-4">Musique relaxante 🎵</h2>
-
-      <div v-if="loading"      class="text-center py-16">Chargement…</div>
-      <div v-else-if="error"   class="text-center py-16 text-error">{{ error }}</div>
-
+  <div
+    class="hero bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 min-h-screen relative overflow-hidden"
+  >
+    <div class="absolute inset-0 overflow-hidden">
       <div
-        v-else-if="audioVideos.length"
-        class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        class="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-xl animate-pulse"
+      />
+      <div
+        class="absolute top-3/4 right-1/4 w-24 h-24 bg-secondary/20 rounded-full blur-xl animate-pulse delay-1000"
+      />
+      <div
+        class="absolute top-1/2 right-1/3 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-pulse delay-2000"
+      />
+    </div>
+    <main
+      class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20"
+    >
+      <section class="relative z-10 max-w-6xl mx-auto px-4">
+        <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+          <UFilterBar
+            :model-value="filters"
+            @update:model-value="updateFilters"
+          />
+          <button
+            class="btn bg-base-200 text-base-content border-none hover:bg-base-300 transition"
+            :disabled="loading"
+            @click="fetchVideos"
+          >
+            🔍 Rechercher
+          </button>
+        </div>
+      </section>
+      <section
+        v-if="filters.type === 'audio' || filters.type === 'tous'"
+        class="relative z-10 max-w-6xl mx-auto px-4 mt-10"
       >
-        <SessionCard v-for="v in audioVideos" :key="v.id" :video="v" />
-      </div>
+        <h2 class="text-2xl font-bold mb-4">Musique relaxante 🎵</h2>
 
-      <div v-else class="text-center py-16 text-neutral">
-        {{ lastSearch ? 'Aucune musique trouvée.' : 'Cliquez sur « Rechercher ».' }}
-      </div>
-    </section>
-    <section v-if="filters.type==='video'||filters.type==='tous'"
-             class="relative z-10 max-w-6xl mx-auto px-4 mt-12">
-      <h2 class="text-2xl font-bold mb-4">Vidéos YouTube 🧘‍♀️</h2>
-      <div v-if="loading"      class="text-center py-16">Chargement…</div>
-      <div v-else-if="error"   class="text-center py-16 text-error">{{ error }}</div>
-      <div v-else-if="guidedVideos.length"
-           class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <SessionCard v-for="v in guidedVideos" :key="v.id" :video="v" />
-      </div>
-      <div v-else class="text-center py-16 text-neutral">
-        {{ lastSearch ? 'Aucune vidéo trouvée.' : 'Cliquez sur « Rechercher ».' }}
-      </div>
-    </section>
+        <div v-if="loading" class="text-center py-16">Chargement…</div>
+        <div v-else-if="error" class="text-center py-16 text-error">
+          {{ error }}
+        </div>
+
+        <div
+          v-else-if="audioVideos.length"
+          class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <SessionCard v-for="v in audioVideos" :key="v.id" :video="v" />
+        </div>
+
+        <div v-else class="text-center py-16 text-neutral">
+          {{
+            lastSearch
+              ? "Aucune musique trouvée."
+              : "Cliquez sur « Rechercher »."
+          }}
+        </div>
+      </section>
+      <section
+        v-if="filters.type === 'video' || filters.type === 'tous'"
+        class="relative z-10 max-w-6xl mx-auto px-4 mt-12"
+      >
+        <h2 class="text-2xl font-bold mb-4">Vidéos YouTube 🧘‍♀️</h2>
+        <div v-if="loading" class="text-center py-16">Chargement…</div>
+        <div v-else-if="error" class="text-center py-16 text-error">
+          {{ error }}
+        </div>
+        <div
+          v-else-if="guidedVideos.length"
+          class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <SessionCard v-for="v in guidedVideos" :key="v.id" :video="v" />
+        </div>
+        <div v-else class="text-center py-16 text-neutral">
+          {{
+            lastSearch ? "Aucune vidéo trouvée." : "Cliquez sur « Rechercher »."
+          }}
+        </div>
+      </section>
+    </main>
   </div>
 </template>

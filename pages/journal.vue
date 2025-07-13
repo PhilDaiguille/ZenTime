@@ -38,10 +38,9 @@ async function fetchWeather() {
   try {
     const lat = 48.8566;
     const lon = 2.3522;
-    const res = await fetch(
+    const data = await $fetch(
       `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${apiKey}`,
     );
-    const data = await res.json();
     const temp = Math.round(data.current.temp);
     const desc = data.current.weather[0].description;
     weather.value = `${temp}°C, ${desc}`;
@@ -103,9 +102,21 @@ function clearHistory() {
 </script>
 
 <template>
-  <div class="relative min-h-screen overflow-hidden bg-base-100">
+  <div
+    class="hero bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 min-h-screen relative overflow-hidden"
+  >
+    <div class="absolute inset-0 overflow-hidden">
+      <div
+        class="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-xl animate-pulse"
+      />
+      <div
+        class="absolute top-3/4 right-1/4 w-24 h-24 bg-secondary/20 rounded-full blur-xl animate-pulse delay-1000"
+      />
+      <div
+        class="absolute top-1/2 right-1/3 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-pulse delay-2000"
+      />
+    </div>
     <Notification :visible="showNotification" :message="notificationMessage" />
-    <ZenWave class="absolute inset-0" />
     <main
       class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20"
     >
@@ -148,13 +159,13 @@ function clearHistory() {
             <button
               v-for="mood in moods"
               :key="mood"
-              @click="selectedMood = mood"
               :class="[
                 'text-3xl sm:text-4xl lg:text-5xl p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110',
                 selectedMood === mood
                   ? 'scale-125 bg-base-200 shadow-lg'
                   : 'opacity-60 hover:opacity-100',
               ]"
+              @click="selectedMood = mood"
             >
               {{ mood }}
             </button>
@@ -164,10 +175,10 @@ function clearHistory() {
             class="w-full p-3 sm:p-4 rounded-2xl bg-gray-50 border border-gray-200 focus:border-base-content focus:outline-none resize-none transition-colors text-sm sm:text-base"
             placeholder="Écris librement tes pensées, tes gratitudes, tes émotions..."
             rows="4"
-          ></textarea>
+          />
           <button
-            @click="saveEntry"
             class="w-full mt-6 bg-base-200 hover:bg-base-300 text-base-content font-semibold py-3 px-6 rounded-2xl transition-colors shadow-lg text-sm sm:text-base"
+            @click="saveEntry"
           >
             Enregistrer mon humeur
           </button>
@@ -183,9 +194,9 @@ function clearHistory() {
           </h2>
           <div class="h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96">
             <MoodChart
-              :labels="chartLabels"
-              :dataPoints="chartDataPoints"
               :key="chartKey"
+              :labels="chartLabels"
+              :data-points="chartDataPoints"
             />
           </div>
         </div>

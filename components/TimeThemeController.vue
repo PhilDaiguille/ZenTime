@@ -1,34 +1,38 @@
 <script setup lang="ts">
+type ThemeName = "ZenTimeLight" | "ZenTimeDawn" | "ZenTimeDusk" | "ZenTimeDark";
+type PeriodKey = "dawn" | "day" | "dusk" | "night";
+
 const {
   currentTheme,
   timeThemes,
   startAutoTheme,
   stopAutoTheme,
-  setManualTheme,
+  applyTheme,
   getCurrentPeriod,
   getTimeToNextChange,
 } = useTimeBasedTheme();
 
-const autoMode = ref(true);
+const themeStore = useThemeStore();
+
 const currentPeriod = ref(getCurrentPeriod());
-const timeToNext = ref(null);
+const timeToNext = ref(getTimeToNextChange());
 const currentTime = ref(new Date());
 
-let displayTimer = null;
+let displayTimer: ReturnType<typeof setInterval> | null = null;
 
 const periodColors = {
   dawn: "bg-gradient-to-r from-pink-400 to-orange-400",
   day: "bg-gradient-to-r from-blue-400 to-teal-400",
   dusk: "bg-gradient-to-r from-purple-400 to-pink-500",
   night: "bg-gradient-to-r from-indigo-900 to-gray-900",
-};
+} as const;
 
 const periodColor = computed(() => {
   const period = getCurrentPeriod();
-  const key = Object.keys(timeThemes).find(
+  const key = (Object.keys(timeThemes) as PeriodKey[]).find(
     (k) => timeThemes[k].theme === period.theme,
   );
-  return periodColors[key] || "bg-base-content";
+  return key ? periodColors[key] : "bg-base-content";
 });
 
 const currentTimePosition = computed(() => {
@@ -37,24 +41,26 @@ const currentTimePosition = computed(() => {
 });
 
 const toggleAutoMode = () => {
-  autoMode.value = !autoMode.value;
+  themeStore.setAutoMode(!themeStore.isAutoMode.value);
 
-  if (autoMode.value) {
+  if (themeStore.isAutoMode.value) {
     startAutoTheme();
   } else {
     stopAutoTheme();
   }
 };
 
-const selectTheme = (theme) => {
-  setManualTheme(theme);
+const selectTheme = (theme: ThemeName) => {
+  themeStore.setManualTheme(theme);
+  stopAutoTheme();
+  applyTheme(theme);
 };
 
-const getThemeColor = (key) => {
+const getThemeColor = (key: PeriodKey) => {
   return periodColors[key] || "bg-base-content";
 };
 
-const formatTime = (date) => {
+const formatTime = (date: Date) => {
   return date.toLocaleTimeString("fr-FR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -64,7 +70,7 @@ const formatTime = (date) => {
 const updateDisplay = () => {
   currentTime.value = new Date();
   currentPeriod.value = getCurrentPeriod();
-  if (autoMode.value) {
+  if (themeStore.isAutoMode.value) {
     timeToNext.value = getTimeToNextChange();
   }
 };
@@ -74,8 +80,6 @@ const handleThemeChange = () => {
 };
 
 onMounted(() => {
-  startAutoTheme();
-
   displayTimer = setInterval(updateDisplay, 1000);
 
   if (import.meta.client) {
@@ -97,7 +101,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="theme-controller bg-base-200 p-4 rounded-lg shadow-lg">
+  <div
+    class="theme-controller bg-base-200 p-4 rounded-lg shadow-lg max-w-xl mx-auto container"
+  >
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
         <div class="w-3 h-3 rounded-full" :class="periodColor" />
@@ -114,18 +120,16 @@ onUnmounted(() => {
       <div class="flex items-center gap-2">
         <button
           class="btn btn-sm"
-          :class="autoMode ? 'btn-primary' : 'btn-outline'"
+          :class="themeStore.isAutoMode.value ? 'btn-primary' : 'btn-outline'"
           @click="toggleAutoMode"
         >
-          <Icon name="i-heroicons-clock" class="w-4 h-4" />
-          {{ autoMode ? "Auto" : "Manuel" }}
+          {{ themeStore.isAutoMode.value ? "Auto" : "Manuel" }}
         </button>
       </div>
     </div>
 
-    <div v-if="autoMode && timeToNext" class="mb-4">
+    <div v-if="themeStore.isAutoMode.value && timeToNext" class="mb-4">
       <div class="flex items-center gap-2 text-sm text-base-content/70">
-        <Icon name="i-heroicons-arrow-right" class="w-4 h-4" />
         <span
           >Prochain: {{ timeToNext.nextPeriod }} dans {{ timeToNext.hours }}h
           {{ timeToNext.minutes }}m</span
@@ -133,7 +137,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="!autoMode" class="grid grid-cols-2 gap-2">
+    <div v-if="!themeStore.isAutoMode.value" class="grid grid-cols-2 gap-2">
       <button
         v-for="(period, key) in timeThemes"
         :key="key"
@@ -141,7 +145,10 @@ onUnmounted(() => {
         :class="currentTheme === period.theme ? 'btn-primary' : 'btn-outline'"
         @click="selectTheme(period.theme)"
       >
-        <div class="w-2 h-2 rounded-full mr-2" :class="getThemeColor(key)" />
+        <div
+          class="w-2 h-2 rounded-full mr-2"
+          :class="getThemeColor(key as PeriodKey)"
+        />
         {{ period.name }}
       </button>
     </div>

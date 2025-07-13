@@ -12,7 +12,6 @@
             expériences audio immersives
           </p>
         </div>
-
         <div class="grid md:grid-cols-3 gap-8">
           <div
             class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
