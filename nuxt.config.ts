@@ -10,7 +10,12 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts", "@pinia/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/fonts",
+    "@pinia/nuxt",
+  ],
   app: {
     head: {
       htmlAttrs: {
