@@ -9,6 +9,7 @@ export default defineNuxtConfig({
       openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
     },
   },
+
   modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts", "@pinia/nuxt"],
   app: {
     head: {

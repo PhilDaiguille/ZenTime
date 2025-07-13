@@ -44,6 +44,7 @@ const chartData = computed(() => ({
   ],
 }))
 
+
 const chartOptions = {
   responsive: true,
   plugins: {

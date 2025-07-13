@@ -127,6 +127,7 @@ onMounted(() => {
     <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
       <WeatherTime />
       <header class="text-center">
+
         <div class="text-4xl sm:text-6xl mb-4">📖</div>
         <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">
           Commence ton journal
@@ -135,6 +136,7 @@ onMounted(() => {
           Exprime ton humeur pour voir ton évolution au fil du temps
         </p>
       </header>
+
 
       <ZenSounds
           :soundOptions="soundOptions"
@@ -167,6 +169,7 @@ onMounted(() => {
           </h2>
           <div class="h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96">
             <MoodChart
+
                 :labels="chartLabels"
                 :data-points="chartDataPoints"
             />

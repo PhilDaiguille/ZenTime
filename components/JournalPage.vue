@@ -180,4 +180,3 @@ function getMoodLabel(mood) {
     </div>
   </div>
 </template>
-
