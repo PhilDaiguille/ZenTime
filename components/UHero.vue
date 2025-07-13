@@ -43,9 +43,12 @@
           >
             Commencer l'évasion
           </NuxtLink>
-          <button class="btn btn-outline btn-lg">
-            Découvrir les playlists
-          </button>
+          <NuxtLink
+            to="/journal"
+            class="btn btn-outline btn-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Devoilez votre humeur
+          </NuxtLink>
         </div>
 
         <div

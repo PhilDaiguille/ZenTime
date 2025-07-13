@@ -36,6 +36,12 @@ import ThemePeriodIndicator from "./ThemePeriodIndicator.vue";
             <li>
               <NuxtLink to="/journal">Journal</NuxtLink>
             </li>
+            <li>
+              <NuxtLink to="/lofi">Chill Lofi</NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/parameter">Paramètres</NuxtLink>
+            </li>
           </ul>
         </div>
       </div>
