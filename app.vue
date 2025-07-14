@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { startAutoTheme } = useTimeBasedTheme();
+
+onMounted(() => {
+  startAutoTheme();
+});
+</script>
+
 <template>
   <UHeader />
   <NuxtPage />

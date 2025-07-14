@@ -1,20 +1,37 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxtjs/tailwindcss", "@nuxt/fonts"],
+
+  runtimeConfig: {
+    public: {
+      openWeatherApiKey: process.env.OPENWEATHER_API_KEY,
+    },
+  },
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxtjs/tailwindcss",
+    "@nuxt/fonts",
+    "@pinia/nuxt",
+  ],
   app: {
     head: {
       htmlAttrs: {
-        "data-theme": "ZenTime",
+        "data-theme": "ZenTimeLight",
       },
+      script: [
+        {
+          src: "https://cdn.jsdelivr.net/npm/@magenta/lofi@latest/dist/bundle.js",
+          defer: true,
+        },
+      ],
     },
   },
-  vite: {
-    plugins: [tailwindcss()],
-  },
+
   css: ["@/assets/css/app.css"],
+
   fonts: {
     defaults: {
       weights: [400],
@@ -29,15 +46,24 @@ export default defineNuxtConfig({
         "latin",
       ],
     },
-    families: [{ name: "Inter", provider: "google" }],
+    families: [
+      { name: "Inter", provider: "google", global: true },
+      { name: "Merriweather", provider: "google", global: true },
+    ],
   },
+
   tailwindcss: {
     exposeConfig: true,
     viewer: true,
+    config: {
+      daisyui: {
+        themes: ["ZenTimeLight", "ZenTimeDawn", "ZenTimeDusk", "ZenTimeDark"],
+      },
+    },
   },
+
   nitro: {
     compressPublicAssets: true,
     minify: true,
   },
-  ssr: true,
 });

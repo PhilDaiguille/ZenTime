@@ -1,7 +1,7 @@
 <template>
-  <div class="join join-vertical bg-base-100">
-    <div class="collapse collapse-arrow join-item border-base-300 border">
-      <input type="radio" name="my-accordion-4" checked="checked" >
+  <div class="flex flex-col gap-2">
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300">
+      <input type="radio" name="my-accordion-2" checked="checked" />
       <div class="collapse-title font-semibold">
         Comment créer ma playlist Zen parfaite ?
       </div>
@@ -10,8 +10,8 @@
         étude, relaxation, méditation ou travail créatif.
       </div>
     </div>
-    <div class="collapse collapse-arrow join-item border-base-300 border">
-      <input type="radio" name="my-accordion-4" >
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300">
+      <input type="radio" name="my-accordion-2" />
       <div class="collapse-title font-semibold">
         Puis-je écouter en mode hors ligne ?
       </div>
@@ -20,8 +20,8 @@
         même sans connexion internet.
       </div>
     </div>
-    <div class="collapse collapse-arrow join-item border-base-300 border">
-      <input type="radio" name="my-accordion-4" >
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300">
+      <input type="radio" name="my-accordion-2" />
       <div class="collapse-title font-semibold">
         Comment personnaliser mon ambiance sonore ?
       </div>

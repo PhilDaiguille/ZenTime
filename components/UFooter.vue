@@ -18,7 +18,7 @@
       </svg>
       <p class="font-bold">
         ZenTime Studio
-        <br >
+        <br />
         Créateur d'ambiances Lofi depuis 2024
       </p>
       <p>Copyright © {{ new Date().getFullYear() }} - Tous droits réservés</p>
