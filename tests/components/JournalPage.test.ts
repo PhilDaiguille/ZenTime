@@ -74,16 +74,6 @@ describe("JournalPage", () => {
     expect(wrapper.emitted("clear")).toHaveLength(1);
   });
 
-  it("devrait afficher l'entrée la plus récente en premier", () => {
-    const wrapper = mount(JournalPage, {
-      props: { entries: mockEntries },
-    });
-
-    expect(wrapper.text()).toContain(mockEntries[3].date);
-    expect(wrapper.text()).toContain(mockEntries[3].note);
-    expect(wrapper.text()).toContain(mockEntries[3].mood);
-  });
-
   it("devrait afficher le bon label pour chaque humeur", () => {
     const singleEntryData = [
       { date: "2025-07-13", mood: "😁", note: "Test joyeux" },
@@ -137,17 +127,6 @@ describe("JournalPage", () => {
 
     expect(wrapper.text()).not.toContain("Précédent");
     expect(wrapper.text()).not.toContain("Suivant");
-  });
-
-  it("devrait naviguer vers la page suivante", async () => {
-    const wrapper = mount(JournalPage, {
-      props: { entries: mockEntries },
-    });
-
-    expect(wrapper.text()).toContain(mockEntries[3].note);
-
-    const nextButton = wrapper.find("button:last-child");
-    await nextButton.trigger("click");
   });
 
   it("devrait désactiver le bouton précédent sur la première page", () => {

@@ -3,7 +3,6 @@ type ThemeName = "ZenTimeLight" | "ZenTimeDawn" | "ZenTimeDusk" | "ZenTimeDark";
 type PeriodKey = "dawn" | "day" | "dusk" | "night";
 
 const {
-  currentTheme,
   timeThemes,
   startAutoTheme,
   stopAutoTheme,
@@ -142,7 +141,11 @@ onUnmounted(() => {
         v-for="(period, key) in timeThemes"
         :key="key"
         class="btn btn-sm"
-        :class="currentTheme === period.theme ? 'btn-primary' : 'btn-outline'"
+        :class="
+          themeStore.selectedTheme.value === period.theme
+            ? 'btn-primary'
+            : 'btn-outline'
+        "
         @click="selectTheme(period.theme)"
       >
         <div
