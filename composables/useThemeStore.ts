@@ -6,13 +6,15 @@ interface ThemeState {
 }
 
 export const useThemeStore = () => {
+  // État initial simple côté serveur
   const themeState = useState<ThemeState>("theme-state", () => ({
     isAutoMode: true,
     selectedTheme: null,
   }));
 
+  // Charger depuis le localStorage côté client uniquement
   const loadStateFromStorage = () => {
-    if (import.meta.client) {
+    if (import.meta.client && typeof window !== "undefined") {
       const saved = localStorage.getItem("zentime-theme-state");
       if (saved) {
         try {
@@ -24,17 +26,14 @@ export const useThemeStore = () => {
         } catch (error) {
           console.warn("Erreur lors du chargement de l'état du thème:", error);
         }
-      } else {
       }
     }
   };
 
   const saveStateToStorage = () => {
     if (import.meta.client) {
-      localStorage.setItem(
-        "zentime-theme-state",
-        JSON.stringify(themeState.value),
-      );
+      const stateToSave = JSON.stringify(themeState.value);
+      localStorage.setItem("zentime-theme-state", stateToSave);
     }
   };
 
