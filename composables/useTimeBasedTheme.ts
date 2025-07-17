@@ -55,6 +55,11 @@ export const useTimeBasedTheme = () => {
   };
 
   const updateTheme = (): void => {
+    const themeStore = useThemeStore();
+    if (!themeStore.isAutoMode.value) {
+      return;
+    }
+
     const currentPeriod = getThemeByTime();
     applyTheme(currentPeriod.theme);
 
