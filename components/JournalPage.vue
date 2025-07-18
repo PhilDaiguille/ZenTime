@@ -8,16 +8,19 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["clear"]);
+const _emit = defineEmits(["clear"]);
 
 const currentPage = ref(0);
 
+// calcul de l'index de depart pour la page
 const startIndex = computed(() => currentPage.value * 2);
 
+// entrée gauche
 const leftEntry = computed(() => {
   return props.entries[startIndex.value] ?? null;
 });
 
+// entrée droite
 const rightEntry = computed(() => {
   return props.entries[startIndex.value + 1] ?? null;
 });
@@ -42,14 +45,19 @@ defineExpose({
   goToLastPage,
 });
 
-function getMoodLabel(mood) {
-  const labels = {
-    "😢": "Triste",
-    "😐": "Neutre",
-    "🙂": "Content",
-    "😁": "Joyeux",
+function getMoodLabel(mood: string): string {
+  const labels: Record<string, string> = {
+    sad: "Triste",
+    neutre: "Neutre",
+    happy: "Content",
+    extrahappy: "Joyeux",
+    lovely: "Amoureux",
   };
   return labels[mood] || "";
+}
+
+function getMoodImage(mood: string): string {
+  return `/images/${mood}.png`;
 }
 </script>
 
@@ -72,12 +80,13 @@ function getMoodLabel(mood) {
         <div
           class="flex bg-base-100 rounded overflow-hidden h-[60vw] sm:h-[340px] lg:h-[280px]"
         >
-          <div class="flex-1 bg-white relative">
+          <!-- entrée gauche -->
+          <div class="flex-1 bg-base relative">
             <div class="absolute inset-0 p-4">
               <div
                 v-for="n in 9"
                 :key="'left-line-' + n"
-                class="absolute w-full border-b border-base-300"
+                class="absolute w-full border-b border-primary"
                 :style="{
                   top: n * 24 + 20 + 'px',
                   left: '20px',
@@ -94,13 +103,17 @@ function getMoodLabel(mood) {
                   {{ leftEntry.date }}
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="text-lg">{{ leftEntry.mood }}</span>
+                  <img
+                    :src="getMoodImage(leftEntry.mood)"
+                    alt="Mood"
+                    class="w-6 h-6 object-contain"
+                  />
                   <span class="text-xs text-base-content opacity-80">
                     {{ getMoodLabel(leftEntry.mood) }}
                   </span>
                 </div>
                 <div
-                  class="text-base-content text-sm leading-relaxed break-words"
+                  class="text-base-content text-sm leading-relaxed break-words pt-4"
                 >
                   {{ leftEntry.note }}
                 </div>
@@ -110,13 +123,18 @@ function getMoodLabel(mood) {
                 class="flex items-center justify-center h-full text-base-content opacity-40"
               >
                 <div class="text-center">
-                  <div class="text-lg mb-1">📝</div>
+                  <img
+                    src="/images/page.png"
+                    alt="Page vide"
+                    class="w-6 h-6 mx-auto mb-1"
+                  />
                   <p class="text-xs">Page vide</p>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- diviseur central -->
           <div
             class="w-3 bg-gradient-to-b from-base-300 via-base-200 to-base-300 shadow-inner relative hidden md:block"
           >
@@ -131,17 +149,14 @@ function getMoodLabel(mood) {
             </div>
           </div>
 
-          <div class="flex-1 bg-white relative">
+          <!-- entrée droite -->
+          <div class="flex-1 bg-base relative">
             <div class="absolute inset-0 p-4">
               <div
                 v-for="n in 9"
                 :key="'right-line-' + n"
-                class="absolute w-full border-b border-base-300"
-                :style="{
-                  top: n * 24 + 20 + 'px',
-                  left: '20px',
-                  right: '20px',
-                }"
+                class="absolute w-full border-b border-primary"
+                :style="{ top: n * 24 + 20 + 'px', right: '20px' }"
               />
             </div>
             <div class="absolute right-6 top-4 bottom-4 w-px bg-red-300" />
@@ -153,13 +168,17 @@ function getMoodLabel(mood) {
                   {{ rightEntry.date }}
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="text-lg">{{ rightEntry.mood }}</span>
+                  <img
+                    :src="getMoodImage(rightEntry.mood)"
+                    alt="Mood"
+                    class="w-6 h-6 object-contain"
+                  />
                   <span class="text-xs text-base-content opacity-80">
                     {{ getMoodLabel(rightEntry.mood) }}
                   </span>
                 </div>
                 <div
-                  class="text-base-content text-sm leading-relaxed break-words"
+                  class="text-base-content text-sm leading-relaxed break-words pt-4"
                 >
                   {{ rightEntry.note }}
                 </div>
@@ -169,7 +188,11 @@ function getMoodLabel(mood) {
                 class="flex items-center justify-center h-full text-base-content opacity-40"
               >
                 <div class="text-center">
-                  <div class="text-lg mb-1">📖</div>
+                  <img
+                    src="/images/notebook.png"
+                    alt="Page vide"
+                    class="w-6 h-6 mx-auto mb-1"
+                  />
                   <p class="text-xs">Page vide</p>
                 </div>
               </div>
