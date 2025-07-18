@@ -1,3 +1,4 @@
+// types pour l'API YouTube
 interface YouTubeThumbnail {
   url: string;
   width: number;
@@ -43,6 +44,7 @@ interface YouTubeVideosResponse {
   items: YouTubeVideoDetails[];
 }
 
+// structure de données pour session vidéo
 export interface VideoSession {
   id: string;
   title: string;
@@ -57,6 +59,7 @@ export interface VideoSession {
 
 type SearchType = "general" | "audio" | "video";
 
+// interface de retour du composable
 interface UseYouTubeSearchReturn {
   sessions: Ref<VideoSession[]>;
   isLoading: Ref<boolean>;
@@ -71,7 +74,9 @@ interface UseYouTubeSearchReturn {
   prevPageToken: Ref<string | null>;
 }
 
+// recherche des vidéos YouTube
 export function useYouTubeSearch(): UseYouTubeSearchReturn {
+  // variables reactives pour stocker les resultats et l'etat
   const sessions: Ref<VideoSession[]> = ref([]);
   const isLoading: Ref<boolean> = ref(false);
   const nextPageToken: Ref<string | null> = ref(null);
@@ -80,6 +85,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
 
   const API_KEY: string = "AIzaSyA3fy6lq27NG0N-0zL42FejHD1nC1DV0To";
 
+  // fonction de recherche
   const search = async (
     query: string,
     pageToken: string = "",
@@ -88,6 +94,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
     isLoading.value = true;
     currentQuery.value = query;
 
+    // URL de recherche YouTube API
     const searchUrl: string = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=12&q=${encodeURIComponent(query)}&key=${API_KEY}&pageToken=${pageToken}`;
 
     try {
@@ -99,6 +106,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
         return;
       }
 
+      // recupére les détails des vidéos : durée, desc etc
       const videoIds: string = data.items
         .map((item) => item.id.videoId)
         .join(",");
@@ -107,11 +115,13 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
       const detailsRes: Response = await fetch(detailsUrl);
       const detailsData: YouTubeVideosResponse = await detailsRes.json();
 
+      // filtrage et transformation des resultats selon le type que l'on veut
       sessions.value = data.items
         .filter((item: YouTubeSearchItem): boolean => {
           const title: string = item.snippet.title.toLowerCase();
           const description: string = item.snippet.description.toLowerCase();
 
+          // Filtrage des contenus audio
           if (type === "audio") {
             return (
               title.includes("music") ||
@@ -130,6 +140,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
               title.includes("peaceful music")
             );
           } else if (type === "video") {
+            // Exclusion de certaines musiques
             const isMusic: boolean =
               title.includes("music only") ||
               title.includes("musique seulement") ||
@@ -142,6 +153,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
                 !title.includes("meditation") &&
                 !title.includes("asmr"));
 
+            // Vidéos
             const isGuided: boolean =
               title.includes("meditation") ||
               title.includes("méditation") ||
@@ -175,6 +187,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
           }
           return true;
         })
+        // transformation des données API en objets VideoSession
         .map((item: YouTubeSearchItem): VideoSession => {
           const details: YouTubeVideoDetails | undefined =
             detailsData.items.find(
@@ -211,6 +224,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
     }
   };
 
+  // conversation de la durée YouTube (PT1H2M3S) en sec
   const parseDuration = (duration: string): number => {
     const match: RegExpMatchArray | null = duration.match(
       /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/,
@@ -224,6 +238,7 @@ export function useYouTubeSearch(): UseYouTubeSearchReturn {
     return hours * 3600 + minutes * 60 + seconds;
   };
 
+  // ecrit la durée en format lisible
   const formatDuration = (seconds: number): string => {
     const hours: number = Math.floor(seconds / 3600);
     const minutes: number = Math.floor((seconds % 3600) / 60);
