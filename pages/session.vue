@@ -1,14 +1,18 @@
 <script setup lang="ts">
+// variables pour filtrer les résultats par theme, durée et type
 const filters = reactive({ theme: "tous", duration: "tous", type: "tous" });
 const { sessions, isLoading: loading, search } = useYouTubeSearch();
 
+// variables pour gerer les erreurs et etat de la recherche
 const error = ref("");
 const lastSearch = ref("");
 const fromCache = ref(false);
 
+// stockage des reésultats audio et video
 const audioResults = ref([]);
 const videoResults = ref([]);
 
+// charge du contenu par defaut au moment où on monte le composant
 onMounted(loadDefaultContent);
 
 function updateFilters(next) {
@@ -16,6 +20,7 @@ function updateFilters(next) {
   if (lastSearch.value) setTimeout(fetchVideos, 300);
 }
 
+// construction des mots-clés de recherche selon le type et le thème que le user choisit
 function buildKeyword(type = null) {
   const t = type || filters.type;
   const base = filters.theme !== "tous" ? filters.theme : "";
@@ -26,11 +31,13 @@ function buildKeyword(type = null) {
   return base || "relaxation meditation nature";
 }
 
+// système de cache pour éviter de refaire les mêmes recherches
 const CACHE_KEY = "ytCacheZenTime";
 const readCache = (q) => {
   const all = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
   const e = all[q];
   if (!e) return null;
+  // expire après 6h
   if (Date.now() - e.time > 6 * 60 * 60 * 1000) {
     delete all[q];
     localStorage.setItem(CACHE_KEY, JSON.stringify(all));
@@ -44,6 +51,7 @@ const writeCache = (q, data) => {
   localStorage.setItem(CACHE_KEY, JSON.stringify(all));
 };
 
+// filtrage des résultats en fonction de la durée de la vidéo
 function applyDurationFilter(arr) {
   if (filters.duration === "tous") return arr;
   return arr.filter((v) => {
@@ -84,6 +92,7 @@ async function fetchVideoContent() {
   writeCache(`video_${q}_${filters.duration}`, res);
 }
 
+// fonction pour récupérer les vidéos selon les filtres
 async function fetchVideos() {
   error.value = "";
   fromCache.value = false;
@@ -114,6 +123,7 @@ async function loadDefaultContent() {
   }
 }
 
+// computed pour afficher les résultats selon le type choisit
 const audioVideos = computed(() =>
   filters.type === "video" ? [] : audioResults.value,
 );
