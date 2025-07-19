@@ -8,8 +8,15 @@ const time = ref("");
 
 const journal = useJournalStore();
 
-const moods = ["😢", "😐", "🙂", "😁"];
+const moods = [
+  { value: "sad", image: "/images/sad.png" },
+  { value: "neutre", image: "/images/neutre.png" },
+  { value: "happy", image: "/images/happy.png" },
+  { value: "extrahappy", image: "/images/extrahappy.png" },
+  { value: "lovely", image: "/images/lovely.png" },
+];
 const selectedMood = ref("");
+
 const note = ref("");
 const showNotification = ref(false);
 const notificationMessage = ref("");
@@ -29,7 +36,7 @@ const soundOptions = [
     image: "/images/forest.jpg",
   },
   {
-    name: "Cicadas",
+    name: "Cigales",
     file: "/sounds/cicadas.mp3",
     image: "/images/cicadas.jpg",
   },
@@ -84,6 +91,7 @@ function stopSound() {
   currentSound.value = null;
 }
 
+// Appel API à OpenWeather pour récupérer la météo de paris actuelle
 async function fetchWeather() {
   try {
     const lat = 48.8566;
@@ -137,8 +145,8 @@ onMounted(() => {
   journal.loadFromLocalStorage();
   fetchWeather();
   updateTime();
-  setInterval(updateTime, 1000);
-  setInterval(fetchWeather, 3600000);
+  setInterval(updateTime, 1000); //maj heure toutes les sec
+  setInterval(fetchWeather, 3600000); //maj meteo chaque heure
 });
 </script>
 
@@ -163,7 +171,6 @@ onMounted(() => {
     >
       <WeatherTime />
       <header class="text-center">
-        <div class="text-4xl sm:text-6xl mb-4">📖</div>
         <h1 class="text-2xl sm:text-4xl font-bold text-base-content mb-2">
           Commence ton journal
         </h1>
@@ -173,7 +180,7 @@ onMounted(() => {
       </header>
 
       <ZenSounds
-        :soundOptions="soundOptions"
+        :sound-options="soundOptions"
         @play="playSound"
         @stop="stopSound"
       />
@@ -181,13 +188,13 @@ onMounted(() => {
       <div
         :class="
           journal.entries.length
-            ? 'grid gap-6 sm:gap-8 md:gap-10 lg:grid-cols-2'
+            ? 'grid gap-2 sm:gap-8 md:gap-4 lg:grid-cols-2'
             : 'flex justify-center'
         "
       >
         <JournalForm
           :moods="moods"
-          :selectedMood="selectedMood"
+          :selected-mood="selectedMood"
           :note="note"
           @update:mood="selectedMood = $event"
           @update:note="note = $event"
@@ -196,7 +203,7 @@ onMounted(() => {
 
         <div
           v-if="journal.entries.length"
-          class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20"
+          class="bg-base-100 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-primary"
         >
           <h2
             class="text-xl sm:text-2xl font-bold text-base-content mb-6 text-center"
@@ -210,9 +217,9 @@ onMounted(() => {
 
         <div v-if="journal.entries.length" class="lg:col-span-2">
           <JournalPage
+            ref="journalPageRef"
             :entries="journal.entries"
             @clear="clearHistory"
-            ref="journalPageRef"
           />
         </div>
       </div>
